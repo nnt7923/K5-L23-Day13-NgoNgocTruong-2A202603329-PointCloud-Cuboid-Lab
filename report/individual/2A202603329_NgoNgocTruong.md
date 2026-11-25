@@ -1,4 +1,4 @@
-# Báo cáo Day 13 — <Họ và tên>, <MSSV>
+# Báo cáo Day 13 — Ngô Ngọc Trường, 2A202603329 (MSSV thật: 2A202600329)
 
 > **Cách dùng mẫu này:** đổi tên file thành `<MSSV>_<HoTen>.md` (họ tên không dấu, viết liền), ví dụ `2A202600123_NguyenVanAn.md`. Đổi tên, đừng chép thành file thứ hai.
 >
@@ -68,4 +68,8 @@ TODO(học viên): một câu quy luật ("xa gấp … lần thì số điểm 
 TODO(học viên): đổi kiểm: MSSV người đã kiểm chéo với bạn, hai con số nào được đối chiếu với bảng A, khớp hay lệch (lệch thì đã sửa gì).
 
 ## 6. Ý nghĩa của nhãn, cách dùng AI và điều còn chưa chắc
-TODO(học viên): (a) hai câu, nói từ phía model sẽ học trên nhãn này: vì sao nhãn 3D đo bằng mét chứ không phải pixel; vì sao vật thưa điểm cần quy tắc riêng. (b) Dùng AI? Ghi 3 dòng: công cụ, câu hỏi chính, bạn dùng kết quả thế nào. Không dùng: ghi "không dùng". (c) Điều còn chưa chắc, lỗi phát hiện sau hạn (không chấm; viết bằng lời, không chép số từ phiếu hồ sơ lỗi).
+TODO(học viên): (a) hai câu, nói từ phía model sẽ học trên nhãn này: vì sao nhãn 3D đo bằng mét chứ không phải pixel; vì sao vật thưa điểm cần quy tắc riêng. 
+LiDAR đo khoảng cách thực bằng tia laser, trả về tọa độ không gian 3D $(x, y, z)$ theo mét chứ không phải lưới ảnh 2D dạng pixel. Kích thước vật thể tính bằng mét không đổi dù ở gần hay xa (khác với pixel bị co nhỏ khi ra xa), giúp xe tự hành tính chính xác khoảng cách và lập kế hoạch tránh va chạm.
+(b) Dùng AI? Ghi 3 dòng: công cụ, câu hỏi chính, bạn dùng kết quả thế nào. Không dùng: không dùng
+(c) Điều còn chưa chắc, lỗi phát hiện sau hạn (không chấm; viết bằng lời, không chép số từ phiếu hồ sơ lỗi).
+Các object từ xa không xác định rõ đc khoảng cách được bao nhiêu met để label.
