@@ -1,75 +1,87 @@
 # Báo cáo Day 13 — Ngô Ngọc Trường, 2A202603329 (MSSV thật: 2A202600329)
 
-> **Cách dùng mẫu này:** đổi tên file thành `<MSSV>_<HoTen>.md` (họ tên không dấu, viết liền), ví dụ `2A202600123_NguyenVanAn.md`. Đổi tên, đừng chép thành file thứ hai.
->
-> Xoá mọi dấu TODO và dòng gợi ý (dòng bắt đầu bằng `>`). Mỗi con số lấy từ **bảng A** hoặc **phiếu tự kiểm** trong `submission/`, kèm đơn vị (m, °). Ảnh để trong `report/individual/images/` (nộp LMS trong file zip, không commit); trong báo cáo chỉ ghi **tên file ảnh**. Báo cáo này nằm trên repo public: không chép biển số, chữ trên biển hiệu hay biển chỉ đường, tên đường, địa danh; nhắc tới bạn khác thì ghi MSSV, không ghi họ tên. Cả báo cáo ~2 trang.
-
 ## 1. Kết luận trước
-TODO(học viên): mã số, task `D13-…`, 10 frame của bạn; hệ điều hành, trình duyệt, phiên bản CVAT (tên tài khoản → About); MSSV bạn ngồi cạnh. Rồi 2–3 câu: tổng bao nhiêu cuboid, frame nào ít nhất và vì sao; `selfcheck` cờ bao nhiêu cuboid trên tổng số; bạn tin phần nào nhất và phần nào còn yếu nhất (hướng, đáy, kích thước, class, vật xa).
+Mã số trong `configs/lab.ini`: **2A202603329**. Đây là mã gõ nhầm lúc tạo task; MSSV thật của tôi là **2A202600329**. Toàn bộ cuboid đã vẽ trên task `D13-2A202603329`, nên bài nộp theo mã này và tôi đã báo coach. 10 frame: s01f12, s01f42, s02f04, s02f20, s03f05, s03f20, s04f17, s04f36, s05f04, s05f27. Máy Windows, PowerShell 5.1, trình duyệt Edge; CVAT server 2.74.1 (SDK 2.83.0 báo lệch phiên bản nhưng `sync` vẫn chạy). Bạn ngồi cạnh: không đổi kiểm được (xem mục 5).
 
-TODO(học viên): cách dùng CVAT, 3 dòng: đổi góc nhìn (nhìn từ trên xuống, xoay, dời); vẽ và chỉnh một cuboid (Shape, nháy đúp, Top/Side/Front); bật mũi tên hướng (Cuboid orientation) và xem cuboid trên ảnh camera (`preview`).
+Tổng **133 cuboid** (105 Car, 13 Pedestrian, 9 Cyclist, 3 Truck, 3 Bus). Frame ít nhất là s02f04 và s05f27 với 9 hộp: cảnh ít vật rõ trong 50 m. `selfcheck` cờ **18/133** cuboid, 12 trong số đó ở frame đầu s01f12. Tôi tin nhất phần đáy hộp và hướng của xe cùng chiều (z đáy trung vị −1,79 m, yaw xe con phía trước ≈ 270°). Yếu nhất là **kích thước xe ở xa và xe bị che** trong frame đầu: nhiều hộp Car chỉ dài 2–2,7 m vì tôi vẽ theo phần điểm nhìn thấy thay vì suy ra cả thân xe.
+
+Cách dùng CVAT: xoay khung 3D bằng chuột trái, dời bằng chuột phải, lăn để phóng; nháy đúp chỗ trống để về góc nhìn mặc định. Vẽ cuboid: chọn label → **Shape** → nháy đúp lên cụm điểm, rồi chỉnh tâm, dài, rộng, yaw ở **Top** và đáy, chiều cao ở **Side/Front**. Bật Appearance → **Cuboid orientation** để thấy mũi tên hướng; xem cuboid trên ảnh camera bằng `python scripts/lab.py preview` (ảnh trong `work/xem/`).
 
 ## 2. Đọc frame (Bước 2)
-Hai frame đọc kỹ. Ảnh: `t1-<frame>-3d`, `t1-<frame>-top` (ảnh nhìn từ trên xuống, có đánh dấu phía trước, +x, +y).
+Hai frame đọc kỹ. Ảnh: `t1-s01f12-3d`, `t1-s01f12-top`, `t1-s01f42-3d`, `t1-s01f42-top`.
 
 | Frame | Phía trước xe ở cạnh nào của ảnh nhìn từ trên xuống; +x, +y chỉ về đâu | Mặt đường (phẳng/dốc; thấp hơn LiDAR ~ m) | Vật xa nhất đọc được (~ m) | Loại vật thấy | Vật phía sau / hai bên | Cụm chưa đọc được |
 |---|---|---|---|---|---|---|
-| TODO(học viên) | | | | | | |
-| TODO(học viên) | | | | | | |
+| s01f12 | Phía trước (−y) ở cạnh trái ảnh; +x xuống dưới (bên trái xe), +y sang phải (phía sau) | Phẳng; thấp hơn LiDAR ~1,8 m | ~44 m (xe con, chỉ ~18 điểm) | Xe con, xe tải, người đi bộ | 8/12 hộp ở phía sau (+y), xe tải ~32 m phía trước | Cụm rất thưa ~54 m phía trước: có thể là xe nhưng chỉ 17 điểm |
+| s01f42 | Như trên: trước ở cạnh trái; +x xuống, +y sang phải | Phẳng; thấp hơn LiDAR ~1,8 m | ~40 m | Xe con, xe đạp/xe máy, người đi bộ | Xe hai bánh và người đi bộ ở hai bên đường | Các vật ~40 m chỉ còn vài chục điểm, khó phân biệt xe con với xe van |
 
-TODO(học viên): 3 điều **chỉ camera** cho biết và 3 điều **chỉ LiDAR** cho biết, lấy từ chính hai frame trên.
+Chỉ camera cho biết: màu xe và loại xe (sedan, van, xe buýt hay xe tải), người có đang lái xe máy hay dắt xe, và nội dung biển báo, đèn tín hiệu. Chỉ LiDAR cho biết: khoảng cách thật theo mét tới từng xe, độ cao mặt đường so với cảm biến (~−1,8 m), và vật ở phía sau, hai bên trong vùng các camera trước không thấy.
 
 Tám frame lướt:
 
 | Frame | Phía trước ở cạnh nào của ảnh nhìn từ trên xuống | Điều lạ (nếu có) |
 |---|---|---|
-| TODO(học viên) | | |
+| s02f04 | Cạnh trái | Có xe buýt; ít vật rõ (9 hộp) |
+| s02f20 | Cạnh trái | Nhiều xe ngược chiều (yaw ≈ 90°) |
+| s03f05 | Cạnh trái | Chỉ có xe con, vật xa nhất ~34 m |
+| s03f20 | Cạnh trái | Cảnh đông (25 hộp), nhiều người đi bộ đứng sát nhau |
+| s04f17 | Cạnh trái | Dòng xe con dày ở cả trước và sau |
+| s04f36 | Cạnh trái | Có xe tải; vật xa ~48 m rất thưa |
+| s05f04 | Cạnh trái | Có xe tải |
+| s05f27 | Cạnh trái | Mặt đường hơi thấp hơn các frame khác (z đáy trung vị −1,93 m) |
 
 ## 3. Ba cuboid có hướng dẫn (Bước 3)
 Ảnh: `t2-a-car`, `t2-b-bus-truck`, `t2-c-ped-cyclist`.
 
 | Vật | Frame, idx | Class | Mũi tên yaw đúng hướng? | Đáy chạm đường? | Đã kiểm Top/Side/Front + ảnh? | Kích thước trong bảng 4.3? |
 |---|---|---|---|---|---|---|
-| (a) xe con gần | TODO(học viên) | | | | | |
-| (b) xe buýt hoặc xe tải | TODO(học viên) | | | | | |
-| (c) người đi bộ hoặc xe hai bánh | TODO(học viên) | | | | | |
+| (a) xe con gần | s01f12, 1 | Car | Có, yaw 270,5° (xe cùng chiều phía trước) | Có, z đáy −1,79 m | Có | Có: 3,82 × 1,54 × 1,61 m (đã sửa width từ 1,29 m) |
+| (b) xe buýt hoặc xe tải | s01f12, 5 | Truck | Có, yaw 285,1° | Gần đạt, z đáy −1,43 m (cao hơn mặt đường ~0,36 m) | Có | Dài 10,17 m hợp lý; rộng 3,80 m vượt khoảng 1,6–3,2 m |
+| (c) người đi bộ hoặc xe hai bánh | s01f12, 8 | Pedestrian | Chưa chắc: yaw để 0° | Có, z đáy −1,62 m | Có | Cao 1,94 m hợp lý; rộng 1,00 m hơi lớn |
 
-TODO(học viên): vòng hiệu chuẩn: cuboid của bạn lệch so với các bạn ở điểm nào, cả lớp chốt cách hiểu guideline nào? Và các vật bạn **bỏ qua vì không đủ cơ sở** (frame, vị trí, mô tả, loại nghi vấn như UNCERTAIN_CLASS / LOW_VISIBILITY), hoặc ghi "không có".
+Vòng hiệu chuẩn: tôi đã vẽ cuboid trong task chung `D13-HC485087` nhưng chưa có kết quả so sánh với các bạn để ghi điểm lệch cụ thể. Vật bỏ qua vì không đủ cơ sở: không bỏ hẳn vật nào, nhưng s01f12 #7 (~54,5 m, 17 điểm) lẽ ra nên bỏ qua vì ngoài 50 m và LOW_VISIBILITY.
 
 ## 4. Bốn hiện tượng chất lượng (Bước 4)
-Nguyên nhân ghi là **giả thuyết**. Frame mượn thì ghi rõ nguồn: task chung, hoặc MSSV của bạn cho mượn.
+Nguyên nhân ghi là **giả thuyết**.
 
 | Hiện tượng | Frame / tên ảnh / nguồn | Nguyên nhân (giả thuyết) | Thấy gì trên point cloud | Hệ quả khi gán (theo guideline) |
 |---|---|---|---|---|
-| 1. Bóng che | TODO(học viên) | | | |
-| 2. Thưa ở xa | TODO(học viên) | | | |
-| 3. Phản xạ thấp / ít điểm bất thường | TODO(học viên) | | | |
-| 4. Điểm lạ | TODO(học viên) | | | |
+| 1. Bóng che | s02f00, `t4-1-bong-che`, task chung D13-HC485087 | Xe buýt sát bên trái chặn tia LiDAR | Các vòng quét dừng ở thân xe buýt, phía sau nó gần như không có điểm | Vùng trống là chưa quan sát được, không phải đường trống; vật bị che thì bật occluded và vẽ phần suy luận được |
+| 2. Thưa ở xa | s01f12, `t4-2-thua-o-xa`, task của tôi | Mật độ tia giảm theo khoảng cách | Hộp xe phía sau rất ít điểm ở Top/Side/Front | Chỉ vẽ khi thấy khoảng 15–20% thể tích; không thì bỏ qua, ghi LOW_VISIBILITY |
+| 3. Phản xạ thấp / ít điểm bất thường | s04f02, `t4-3-phan-xa-thap`, task chung D13-HC485087 | Xe van tối màu, nhiều kính phản xạ ít tia (giả thuyết) | Xe van sát phía trước bên phải có ít điểm dù rất gần; biển báo bên trái thì điểm sáng hẳn | Ghi giả thuyết, không khẳng định; vẫn vẽ theo hình dạng suy ra từ camera |
+| 4. Điểm lạ | s02f35, `t4-4-diem-la`, task chung D13-HC485087 | Có thể do phản xạ nhiều lần hoặc nhiễu cảm biến (chưa rõ) | Cụm điểm nhỏ phía sau bên trái nằm thấp hơn hẳn mặt đường | Không gán thành vật |
 
 ## 5. Số từ cuboid của tôi (Bước 5)
-Lấy từ `submission/D13-<MÃ SỐ>-bangA.csv`; số điểm lấy từ cột `points_in` của `-tukiem.csv`. Mặt đường khoảng −1,7 m: z đáy lệch hơn 0,3 m là lơ lửng hoặc chìm.
+Lấy từ `submission/D13-2A202603329-bangA.csv`; số điểm từ cột `points_in` của `-tukiem.csv`.
 
 | Cuboid (frame, idx, class) | z | h | z đáy = z − h/2 | dist_m | r = √(x²+y²+z²) | yaw_deg | Nhận xét (lơ lửng / chìm / chạm đường) |
 |---|---|---|---|---|---|---|---|
-| TODO(học viên) | | | | | | | |
-| TODO(học viên) | | | | | | | |
-| TODO(học viên) | | | | | | | |
+| s01f12, 1, Car | −0,984 | 1,608 | −1,788 | 5,88 | 5,96 | 270,5 | Chạm đường |
+| s01f12, 5, Truck | −0,070 | 2,722 | −1,431 | 31,94 | 31,94 | 285,1 | Cao hơn mặt đường ~0,36 m, hơi lơ lửng |
+| s01f12, 8, Pedestrian | −0,647 | 1,939 | −1,616 | 7,69 | 7,72 | 0,0 | Chạm đường |
 
-TODO(học viên): (a) cuboid **gần nhất** và **xa nhất**: `dist_m` và r của từng cái. (b) Kích thước l, w, h của một người đi bộ (hoặc xe hai bánh) và một xe con so với bảng 4.3: chiều nào ngoài khoảng, vì sao. (c) `yaw_deg` của một xe cùng chiều phía trước và một xe ngược chiều (nếu có): có gần 270° và 90° không.
+(a) Gần nhất: s02f04 #1 Car, dist_m 3,18 m, r 3,35 m. Xa nhất: s01f12 #7 Car, dist_m 54,51 m, r 54,52 m; hộp này ngoài giới hạn 50 m.
+(b) Người đi bộ s01f12 #8: 0,98 × 1,00 × 1,94 m; cao hợp lý, rộng 1,00 m hơi lớn vì hộp ôm cả tay chân và vài điểm vật bên cạnh. Xe con s01f12 #1: 3,82 × 1,54 × 1,61 m, nằm trong khoảng của bảng 4.3.
+(c) Xe cùng chiều phía trước s01f12 #1 yaw 270,5° (gần 270°); xe có yaw ngược lại: s02f20 #4 yaw 90,0°, tôi hiểu là xe ngược chiều.
 
 Mật độ theo khoảng cách (4 cuboid ở các `dist_m` khác nhau):
 
 | Cuboid (frame, idx, class) | dist_m | Số điểm (`points_in`) |
 |---|---|---|
-| TODO(học viên) | | |
+| s02f04, 1, Car | 3,18 | 2294 |
+| s04f17, 4, Car | 16,84 | 682 |
+| s01f42, 5, Car | 21,49 | 300 |
+| s04f17, 13, Car | 33,52 | 135 |
 
-TODO(học viên): một câu quy luật ("xa gấp … lần thì số điểm còn khoảng …") và so với đường cong ở slide bài giảng (xe con: khoảng 1968 điểm ở 0–10 m, 718 ở 10–20 m, 214 ở 20–30 m, 72 ở 30–40 m, 19 ở 60–80 m). Rồi phần tự kiểm: hai cuboid bạn **đã sửa** sau `preview` / `selfcheck` (frame, idx, sửa gì), và những cảnh báo bạn **giữ nguyên** kèm lý do.
+Quy luật: xa gấp khoảng 2 lần thì số điểm còn khoảng 1/3–1/4. Trung vị xe con không bị cờ của tôi là ~2282 điểm ở 0–10 m, 682 ở 10–20 m, 300 ở 20–30 m, 122 ở 30–40 m, 54 ở 40–50 m; khá gần đường cong slide (1968, 718, 214, 72), chỉ cao hơn một chút ở 20–40 m.
 
-TODO(học viên): đổi kiểm: MSSV người đã kiểm chéo với bạn, hai con số nào được đối chiếu với bảng A, khớp hay lệch (lệch thì đã sửa gì).
+Tự kiểm: tôi đã sửa các hộp Car ở s01f12 sau lần `sync` đầu: #1 (width 1,29 → 1,54 m, hết cờ), #10 (đáy bị chìm 0,69 m → đã nâng lên), và kéo dài #3, #4. Số hộp có cờ giảm từ 19 xuống 18. Giữ nguyên: s01f12 #9 và #10 (length < width, yaw 0°) vì chỉ thấy một mặt xe bị che, tôi chưa chắc hướng thân xe; các cờ "điểm sát ngoài mép" (s01f12 #8, s01f42 #10, s03f20 #18) vì có thể do vật khác đứng sát cạnh, tôi chưa kiểm hết. Hộp s03f20 #18 và #19 chồng nhau cần xem lại là một hay hai người.
+
+Đổi kiểm: chưa thực hiện.
 
 ## 6. Ý nghĩa của nhãn, cách dùng AI và điều còn chưa chắc
-TODO(học viên): (a) hai câu, nói từ phía model sẽ học trên nhãn này: vì sao nhãn 3D đo bằng mét chứ không phải pixel; vì sao vật thưa điểm cần quy tắc riêng. 
-LiDAR đo khoảng cách thực bằng tia laser, trả về tọa độ không gian 3D $(x, y, z)$ theo mét chứ không phải lưới ảnh 2D dạng pixel. Kích thước vật thể tính bằng mét không đổi dù ở gần hay xa (khác với pixel bị co nhỏ khi ra xa), giúp xe tự hành tính chính xác khoảng cách và lập kế hoạch tránh va chạm.
-(b) Dùng AI? Ghi 3 dòng: công cụ, câu hỏi chính, bạn dùng kết quả thế nào. Không dùng: không dùng
-(c) Điều còn chưa chắc, lỗi phát hiện sau hạn (không chấm; viết bằng lời, không chép số từ phiếu hồ sơ lỗi).
-Các object từ xa không xác định rõ đc khoảng cách được bao nhiêu met để label.
+(a) Model học trên point cloud có tọa độ thật, nên nhãn đo bằng mét mới cho model biết kích thước và khoảng cách thật của vật, không đổi dù vật ở gần hay xa như pixel; nhờ vậy xe tự hành tính được khoảng cách an toàn. Vật thưa điểm cần quy tắc riêng vì nếu ép model học hộp đầy đủ từ vài điểm, model sẽ học "bịa" vật; quy tắc 15–20% thể tích và LOW_VISIBILITY giữ nhãn nhất quán và trung thực.
+
+(b) Dùng AI: không dùng
+
+(c) Điều còn chưa chắc: kích thước các xe ở xa hoặc bị che trong s01f12 (nhiều hộp Car dài dưới 3 m), hướng của s01f12 #9 và #10, và hộp s01f12 #7 ở ngoài 50 m. Việc tạo task bằng mã gõ nhầm (2A202603329 thay vì 2A202600329) là lỗi của tôi lúc cấu hình.
