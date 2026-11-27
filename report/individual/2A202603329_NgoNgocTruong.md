@@ -28,16 +28,16 @@ Tám frame lướt:
 | s04f17 | Cạnh trái | Dòng xe con dày ở cả trước và sau |
 | s04f36 | Cạnh trái | Có xe tải; vật xa ~48 m rất thưa |
 | s05f04 | Cạnh trái | Có xe tải |
-| s05f27 | Cạnh trái | Mặt đường hơi thấp hơn các frame khác (z đáy trung vị −1,93 m) |
+| s05f27 | Cạnh trái | Mặt đường thấp hơn các frame khác (z đáy trung vị −1,93 m); khoảng hở với mặt đường chỉ −0,01 đến 0,12 m nên hộp vẫn chạm đường |
 
 ## 3. Ba cuboid có hướng dẫn (Bước 3)
 Ảnh: `t2-a-car`, `t2-b-bus-truck`, `t2-c-ped-cyclist`.
 
 | Vật | Frame, idx | Class | Mũi tên yaw đúng hướng? | Đáy chạm đường? | Đã kiểm Top/Side/Front + ảnh? | Kích thước trong bảng 4.3? |
 |---|---|---|---|---|---|---|
-| (a) xe con gần | s01f12, 1 | Car | Có, yaw 270,5° (xe cùng chiều phía trước) | Có, z đáy −1,79 m | Có | Có: 3,82 × 1,54 × 1,61 m (đã sửa width từ 1,29 m) |
-| (b) xe buýt hoặc xe tải | s01f12, 5 | Truck | Có, yaw 285,1° | Gần đạt, z đáy −1,43 m (cao hơn mặt đường ~0,36 m) | Có | Dài 10,17 m hợp lý; rộng 3,80 m vượt khoảng 1,6–3,2 m |
-| (c) người đi bộ hoặc xe hai bánh | s01f12, 8 | Pedestrian | Chưa chắc: yaw để 0° | Có, z đáy −1,62 m | Có | Cao 1,94 m hợp lý; rộng 1,00 m hơi lớn |
+| (a) xe con gần | s01f12, 1 | Car | Có, yaw 270,5° (xe cùng chiều phía trước) | Có: z đáy −1,79 m, khoảng hở với mặt đường −0,03 m | Có, `t2-a-car` | Có: 3,82 × 1,54 × 1,61 m (đã sửa width từ 1,29 m) |
+| (b) xe buýt hoặc xe tải | s01f12, 5 | Truck | Có, yaw 285,1° | Có nhưng sát ngưỡng: z đáy −1,43 m, khoảng hở với mặt đường quanh hộp 0,26 m (ngưỡng 0,3 m) | Có, `t2-b-bus-truck` | Dài 10,17 m hợp lý; rộng 3,80 m vượt khoảng 1,6–3,2 m, có 334 điểm sát ngoài mép: hộp có thể lệch ngang khỏi xe |
+| (c) người đi bộ hoặc xe hai bánh | s01f12, 8 | Pedestrian | Chưa đúng: yaw để 0°, chưa xoay theo hướng người đi | Có: z đáy −1,62 m, khoảng hở 0,10 m | Có, `t2-c-ped-cyclist` | Cao 1,94 m hợp lý; dài 0,98 m, rộng 1,00 m vượt khoảng 0,5–0,9 m của người lớn, hộp ôm cả điểm vật bên cạnh (421 điểm sát mép) |
 
 Vòng hiệu chuẩn: tôi đã vẽ cuboid trong task chung `D13-HC485087` nhưng chưa có kết quả so sánh với các bạn để ghi điểm lệch cụ thể. Vật bỏ qua vì không đủ cơ sở: không bỏ hẳn vật nào, nhưng s01f12 #7 (~54,5 m, 17 điểm) lẽ ra nên bỏ qua vì ngoài 50 m và LOW_VISIBILITY.
 
@@ -46,10 +46,10 @@ Nguyên nhân ghi là **giả thuyết**.
 
 | Hiện tượng | Frame / tên ảnh / nguồn | Nguyên nhân (giả thuyết) | Thấy gì trên point cloud | Hệ quả khi gán (theo guideline) |
 |---|---|---|---|---|
-| 1. Bóng che | s02f00, `t4-1-bong-che`, task chung D13-HC485087 | Xe buýt sát bên trái chặn tia LiDAR | Các vòng quét dừng ở thân xe buýt, phía sau nó gần như không có điểm | Vùng trống là chưa quan sát được, không phải đường trống; vật bị che thì bật occluded và vẽ phần suy luận được |
-| 2. Thưa ở xa | s01f12, `t4-2-thua-o-xa`, task của tôi | Mật độ tia giảm theo khoảng cách | Hộp xe phía sau rất ít điểm ở Top/Side/Front | Chỉ vẽ khi thấy khoảng 15–20% thể tích; không thì bỏ qua, ghi LOW_VISIBILITY |
+| 1. Bóng che | s02f00, `t4-1-bong-che`, task chung D13-HC485087 | Giả thuyết: xe buýt sát bên trái (~4 m) chặn tia LiDAR | Các vòng quét dừng ở thân xe buýt, phía sau nó gần như không có điểm | Vùng trống là chưa quan sát được, không phải đường trống; vật bị che thì bật occluded và vẽ phần suy luận được |
+| 2. Thưa ở xa | s01f12 #6, `t4-2-thua-o-xa`, task của tôi | Giả thuyết: LiDAR 40 tia, càng xa khoảng cách giữa các tia càng lớn | Xe phía sau cách 35,9 m chỉ có 47 điểm trong hộp (xe ở 5,9 m có 2270 điểm); Top/Side/Front gần như trống | Chỉ vẽ khi thấy khoảng 15–20% thể tích; không thì bỏ qua, ghi LOW_VISIBILITY |
 | 3. Phản xạ thấp / ít điểm bất thường | s04f02, `t4-3-phan-xa-thap`, task chung D13-HC485087 | Xe van tối màu, nhiều kính phản xạ ít tia (giả thuyết) | Xe van sát phía trước bên phải có ít điểm dù rất gần; biển báo bên trái thì điểm sáng hẳn | Ghi giả thuyết, không khẳng định; vẫn vẽ theo hình dạng suy ra từ camera |
-| 4. Điểm lạ | s02f35, `t4-4-diem-la`, task chung D13-HC485087 | Có thể do phản xạ nhiều lần hoặc nhiễu cảm biến (chưa rõ) | Cụm điểm nhỏ phía sau bên trái nằm thấp hơn hẳn mặt đường | Không gán thành vật |
+| 4. Điểm lạ | s02f35, `t4-4-diem-la`, task chung D13-HC485087 | Giả thuyết: tia phản xạ nhiều lần (multipath) hoặc nhiễu cảm biến, chưa rõ | Cụm ~55 điểm phía sau bên trái, cách ~29 m, ở z ≈ −13,3 m, thấp hơn mặt đường quanh đó (~−1,9 m) khoảng 11 m; camera hướng đó không thấy vật | Không gán thành vật |
 
 ## 5. Số từ cuboid của tôi (Bước 5)
 Lấy từ `submission/D13-2A202603329-bangA.csv`; số điểm từ cột `points_in` của `-tukiem.csv`.
@@ -73,7 +73,7 @@ Mật độ theo khoảng cách (4 cuboid ở các `dist_m` khác nhau):
 | s01f42, 5, Car | 21,49 | 300 |
 | s04f17, 13, Car | 33,52 | 135 |
 
-Quy luật: xa gấp khoảng 2 lần thì số điểm còn khoảng 1/3–1/4. Trung vị xe con không bị cờ của tôi là ~2282 điểm ở 0–10 m, 682 ở 10–20 m, 300 ở 20–30 m, 122 ở 30–40 m, 54 ở 40–50 m; khá gần đường cong slide (1968, 718, 214, 72), chỉ cao hơn một chút ở 20–40 m.
+Quy luật: xa gấp 2 lần (16,84 m → 33,52 m) thì số điểm còn khoảng 1/5 (682 → 135); từ 3,2 m ra 33,5 m số điểm giảm khoảng 17 lần, nhanh hơn tỉ lệ 1/khoảng cách. Trung vị xe con không bị cờ của tôi là ~2282 điểm ở 0–10 m, 682 ở 10–20 m, 300 ở 20–30 m, 122 ở 30–40 m, 54 ở 40–50 m; khá gần đường cong slide (1968, 718, 214, 72), chỉ cao hơn một chút ở 20–40 m.
 
 Tự kiểm: tôi đã sửa các hộp Car ở s01f12 sau lần `sync` đầu: #1 (width 1,29 → 1,54 m, hết cờ), #10 (đáy bị chìm 0,69 m → đã nâng lên), và kéo dài #3, #4. Số hộp có cờ giảm từ 19 xuống 18. Giữ nguyên: s01f12 #9 và #10 (length < width, yaw 0°) vì chỉ thấy một mặt xe bị che, tôi chưa chắc hướng thân xe; các cờ "điểm sát ngoài mép" (s01f12 #8, s01f42 #10, s03f20 #18) vì có thể do vật khác đứng sát cạnh, tôi chưa kiểm hết. Hộp s03f20 #18 và #19 chồng nhau cần xem lại là một hay hai người.
 
